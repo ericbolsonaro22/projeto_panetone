@@ -1,0 +1,34 @@
+<!DOCTYPE html>  
+<html lang="pt-BR">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Cálculo do Panetone proteico</title>  
+    <link rel="stylesheet" href="style.css">  
+    <script src="script.js" defer></script>  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>  
+</head>  
+<body>  
+    <div class="container">  
+        <h1>Cálculo de Ingredientes para Panetone Proteica</h1>  
+
+        
+        
+        <label for="raio">Raio do Panetone (cm):</label>  
+        <input type="number" id="raio" placeholder="Ex: 25" required>  
+
+        <label for="espessura">Espessura do Panetone (cm):</label>  
+        <input type="number" id="espessura" placeholder="Ex: 3" required>  
+
+        <button onclick="calcularIngredientes()">Calcular</button>  
+        <button onclick="reiniciar()">Reiniciar</button>  
+        <button onclick="gerarGrafico()">Gerar Gráfico</button>  
+        
+        <h2>Resultados:</h2>  
+        <div id="resultados"></div>  
+
+        <h2>Gráfico de Ingredientes:</h2>  
+        <canvas id="graficoIngredientes" width="400" height="400"></canvas>  
+    </div>  
+</body>  
+</html>  
