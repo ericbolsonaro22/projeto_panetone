@@ -1,109 +1,61 @@
-function calcularIngredientes() {  
-    let raio = parseFloat(document.getElementById('raio').value);  
-    let espessura = parseFloat(document.getElementById('espessura').value);  
-    
-    if (isNaN(raio) || isNaN(espessura) || raio <= 0 || espessura <= 0) {  
-        alert("Por favor, insira valores válidos para raio e espessura.");  
-        return;  
-    }  
+function calcular() {  
+    const quantidade = parseInt(document.getElementById("quantidade").value);  
 
-    let area = Math.PI * Math.pow(raio, 2);  
-    let volume = area * espessura;
-
-    let ingredientesBase = {  
-        farinha: 189,  
-        agua: 106,  
-        azeite: 4,  
-        sal: 3.8,  
-        fermento: 3.1,  
-        acucar: 2.1,  
-        ovo: 56  
+    // Defina os preços dos ingredientes (preços reais e quebrados)  
+    const precosIngredientes = {  
+        "Ovo": 2.35,               // Preço por unidade de ovo  
+        "Farinha de aveia": 0.017,   // R$ 17,00 / kg = R$ 0,017 / g  
+        "Farinha de amêndoa": 0.043,   // R$ 43,00 / kg = R$ 0,043 / g  
+        "Whey protein": 1.12,        // R$ 1,12 / scoop (preço médio)  
+        "Leite sem lactose": 0.009   // R$ 9,00 / litro = R$ 0,009 / ml  
     };  
 
-    let volumeBase = 353.43;
-    let fatorEscala = volume / volumeBase;  
-
-    let ingredientes = {  
-        farinha: ingredientesBase.farinha * fatorEscala,  
-        agua: ingredientesBase.agua * fatorEscala,  
-        azeite: ingredientesBase.azeite * fatorEscala,  
-        sal: ingredientesBase.sal * fatorEscala,  
-        fermento: ingredientesBase.fermento * fatorEscala,  
-        acucar: ingredientesBase.acucar * fatorEscala,  
-        ovo: ingredientesBase.ovo * fatorEscala,
+    // Defina as quantidades dos ingredientes (para 400g)  
+    const ingredientesBase = {  
+        "Ovo": 3,  
+        "Farinha de aveia": 120,
+        "Farinha de amêndoa": 96,
+        "Whey protein": 60,
+        "Leite sem lactose": 124 
     };  
 
-    let resultadosHTML = `<p><strong>Área do Panetone:</strong> ${area.toFixed(2)} cm²</p>`;  
-    resultadosHTML += `<p><strong>Volume do Panetone:</strong> ${volume.toFixed(2)} cm³</p>`;  
-    resultadosHTML += `<table><tr><th>Ingrediente</th><th>Quantidade (g/ml)</th></tr>`;  
-    for (let ingrediente in ingredientes) {  
-        resultadosHTML += `<tr><td>${ingrediente.charAt(0).toUpperCase() + ingrediente.slice(1)}</td><td>${ingredientes[ingrediente].toFixed(2)}</td></tr>`;  
-    }  
-    resultadosHTML += `</table>`;  
-    document.getElementById('resultados').innerHTML = resultadosHTML;  
-
-    gerarGrafico(ingredientes);  
-}  
-
-function gerarGrafico(ingredientes) {  
-    let ctx = document.getElementById('graficoIngredientes').getContext('2d');  
-    let data = {  
-        labels: Object.keys(ingredientes),  
-        datasets: [{  
-            label: 'Quantidade de Ingredientes (g/ml)',  
-            data: Object.values(ingredientes),  
-            backgroundColor: [  
-                'rgba(255, 99, 132, 0.2)',  
-                'rgba(54, 162, 235, 0.2)',  
-                'rgba(255, 206, 86, 0.2)',  
-                'rgba(75, 192, 192, 0.2)',  
-                'rgba(153, 102, 255, 0.2)',  
-                'rgba(255, 159, 64, 0.2)',  
-                'rgba(255, 99, 132, 0.2)'  
-            ],  
-            borderColor: [  
-                'rgba(255, 99, 132, 1)',  
-                'rgba(54, 162, 235, 1)',  
-                'rgba(255, 206, 86, 1)',  
-                'rgba(75, 192, 192, 1)',  
-                'rgba(153, 102, 255, 1)',  
-                'rgba(255, 159, 64, 1)',  
-                'rgba(255, 99, 132, 1)'  
-            ],  
-            borderWidth: 1  
-        }]  
-    };  
-
-    if (window.meuGrafico) {  
-        window.meuGrafico.destroy();  
+    let custoIngredientes = 0;  
+    for (let ingrediente in ingredientesBase) {  
+        custoIngredientes += ingredientesBase[ingrediente] * precosIngredientes[ingrediente];  
     }  
 
-  
-    window.meuGrafico = new Chart(ctx, {  
-        type: 'bar',
-        data: data,  
-        options: {  
-            responsive: true,  
-            plugins: {  
-                legend: {  
-                    position: 'top',  
-                },  
-                title: {  
-                    display: true,  
-                    text: 'Quantidade de Ingredientes para o Panetone'  
-                }  
-            }  
+    let valorPanetone = 150.00 + 0.78;
+
+    let valorTotal = valorPanetone * quantidade;  
+
+    document.getElementById("valor").textContent = `R$ ${valorTotal.toFixed(2)}`;  
+
+    const listaIngredientes = document.getElementById("ingredientes");  
+    listaIngredientes.innerHTML = "";
+
+    for (let ingrediente in ingredientesBase) {  
+        let quantidadeIngrediente = ingredientesBase[ingrediente] * quantidade;  
+
+        let quantidadeFormatada;  
+        let unidade;  
+        if (ingrediente === "Ovo") {  
+            quantidadeFormatada = quantidadeIngrediente;  
+            unidade = " unidade(s)";  
+        } else if (ingrediente === "Leite sem lactose") {  
+            quantidadeFormatada = quantidadeIngrediente.toFixed(2);  
+            unidade = " ml";  
+        } else {  
+            quantidadeFormatada = quantidadeIngrediente.toFixed(2);  
+            unidade = " g";  
         }  
-    });  
+        let itemLista = document.createElement("li");  
+        itemLista.textContent = `${ingrediente}: ${quantidadeFormatada}${unidade}`;  
+        listaIngredientes.appendChild(itemLista);  
+    }  
 }  
 
 function reiniciar() {  
-    document.getElementById('raio').value = '';  
-    document.getElementById('espessura').value = '';  
-    document.getElementById('resultados').innerHTML = '';  
-    let ctx = document.getElementById('graficoIngredientes').getContext('2d');  
-    ctx.clearRect(0, 0, 400, 400);
-    if (window.meuGrafico) {  
-        window.meuGrafico.destroy();
-    }  
+    document.getElementById("quantidade").value = "1";
+    document.getElementById("valor").textContent = "R$ 0,00";
+    document.getElementById("ingredientes").innerHTML = "";
 }  
